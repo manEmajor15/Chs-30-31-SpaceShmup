@@ -5,7 +5,7 @@ using UnityEngine;
 public class Hero : MonoBehaviour {
     static public Hero S; // Singleton
 
-    [Header("Set in Inspector")]
+    //[Header("Set in Inspector")]
     // These fields control the movement of the ship
     public float speed = 30;
     public float rollMult = -45;
@@ -15,7 +15,7 @@ public class Hero : MonoBehaviour {
     public float projectileSpeed = 40;
     public Weapon[] weapons;
 
-    [Header("Set Dynamically")]
+   // [Header("Set Dynamically")]
     [SerializeField]
     public float _shieldLevel = 1;
 
@@ -24,8 +24,9 @@ public class Hero : MonoBehaviour {
 
 
     //TODO: Add function delegate declaration
+    public delegate void WeaponFireDelegate();
 
-
+    public WeaponFireDelegate fireDelegate;
 
 	void Start()
     {
@@ -61,9 +62,9 @@ public class Hero : MonoBehaviour {
         transform.rotation = Quaternion.Euler(yAxis * pitchMult, xAxis * rollMult, 0);
 
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetAxis("Jump")== 1 && fireDelegate!= null)
         {                          
-            TempFire();                                                   
+            fireDelegate();                                                   
         }
 
         //TODO: Replace the TempFire call with the weapon delgate call
@@ -71,7 +72,10 @@ public class Hero : MonoBehaviour {
         // First, make sure the button is pressed: Axis("Jump")
         // Then ensure that fireDelegate isn't null to avoid an error
 
-
+        if (Input.GetAxis("Jump") == 1 && fireDelegate != null)
+        {
+            fireDelegate();
+        }
 
     }
 
@@ -79,7 +83,7 @@ public class Hero : MonoBehaviour {
 
 
     //TODO: replace or comment out later
-    void TempFire()
+   /* void TempFire()
     {                                                      
         GameObject projGO = Instantiate<GameObject>(projectilePrefab);
 
@@ -94,7 +98,7 @@ public class Hero : MonoBehaviour {
         float tSpeed = Main.GetWeaponDefinition(proj.type).velocity;
         rigidB.velocity = Vector3.up * tSpeed;
     }
-
+    */
 
     private void OnTriggerEnter(Collider other)
     {

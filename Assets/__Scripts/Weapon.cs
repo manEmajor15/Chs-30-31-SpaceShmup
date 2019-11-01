@@ -101,13 +101,62 @@ public class Weapon : MonoBehaviour {
 
     public void Fire()
     {
-        //TODO: Implement Fire
+
+        if (!gameObject.activeInHierarchy) return;
+
+        if (Time.time - lastShotTime < def.delayBetweenShots)
+        {
+            return;
+        }
+
+        Projectile p;
+
+        switch (type)
+        {
+
+            case WeaponType.blaster:
+                p = MakeProjectile();
+                p.rigid.velocity = Vector3.up * def.velocity;
+                break;
+
+            case WeaponType.spread:
+                p = MakeProjectile();
+                p.rigid.velocity = Vector3.up * def.velocity;
+                p = MakeProjectile();
+                p.rigid.velocity = new Vector3(-.2f, .9f, 0) * def.velocity;
+                p = MakeProjectile();
+                p.rigid.velocity = new Vector3(.2f, .9f, 0) * def.velocity;
+                break;
+
+
+        }
 
     }
 
     public Projectile MakeProjectile()
     {
-        //TODO: Implement MakeProjectile
+        GameObject go = Instantiate(def.projectilePrefab) as GameObject;
+
+        if( transform.parent.gameObject.tag== "Hero")
+        {
+
+            go.tag = "ProjectileHero";
+            go.layer = LayerMask.NameToLayer("ProjectileEnemy");
+        }
+
+        else
+        {
+
+            go.tag = "ProjectileEnemy";
+            go.layer = LayerMask.NameToLayer("ProjectileEnemy");
+        }
+
+        go.transform.position = collar.transform.position;
+        go.transform.parent = PROJECTILE_ANCHOR;
+        Projectile p = go.GetComponent<Projectile>();
+        p.type = type;
+        lastShotTime = Time.time;
+        return (p);
 
 
     }
